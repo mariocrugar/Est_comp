@@ -116,10 +116,12 @@ stringr::str_c(li_percentil, ls_percentil, sep = ",")
 ################################################################################################
 # Pregunta 5
 
+set.seed(6221285)
+
 # con P_i+1 y i = 0,1,2,...
 rBinNegI <- function(n = 10, pe = 0.3){
   U <- runif(1)
-  i <- 1
+  i <- 0
   p <- pe^n
   P <- p
   while (U >= P) {
@@ -129,12 +131,13 @@ rBinNegI <- function(n = 10, pe = 0.3){
   }
   i
 }
-sims_binNeg <- rerun(400, rBinNegI()) %>% flatten_dbl()
+sims_binNeg <- rerun(10000, rBinNegI()) %>% flatten_dbl()
 qplot(sims_binNeg, binwidth = 1)
+
 
 # Prueba con P_i y i = 1,2,3,...
 # Son los resultados más consistentes pero no sé si esté bien
-rBinNegI <- function(n = 10, pe = 0.3){
+rBinNegII <- function(n = 10, pe = 0.3){
   U <- runif(1)
   i <- 1
   p <- pe^n
@@ -146,9 +149,23 @@ rBinNegI <- function(n = 10, pe = 0.3){
   }
   i
 }
-sims_binNeg <- rerun(400, rBinNegI()) %>% flatten_dbl()
-qplot(sims_binNeg, binwidth = 1)
+sims_binNeg_II <- rerun(10000, rBinNegII()) %>% flatten_dbl()
+head(sims_binNeg_II, n = 5)
 
+qplot(sims_binNeg_II, binwidth = 1)
+
+################################################
+# Prueba de gráfica
+
+negbin <- rnbinom(10000, 10, .3)
+qplot(negbin,binwidth = 1)
+
+x_nbin <- seq(0,80)
+y_nbin <- dnbinom(x_nbin, size = 10, prob = .3)
+plot(x_nbin, y_nbin, type = "l")
+
+
+################################################################################################
 # Reproducción pregunta poisson de León
 ################################################################################################
 rpoisI <- function(lambda = 1){
