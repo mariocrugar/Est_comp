@@ -73,14 +73,16 @@ plot(sims_pois, 1:1000)
 ```
 
 ### Pregunta 2
-```{r warning=FALSE}
-
+```{r}
+#descargar la imagen de github y cambiar el path segun la  maquina en que se corra
 ```
+image: ![](/Users/valen/Documents/Maestria-Data-Science/Estadistica Computacional/Archivos Javier/ExamenPregunta_2.png)
 
 ### Pregunta 3
-```{r warning=FALSE}
-
+```{r}
+#descargar la imagen de github y cambiar el path segun la  maquina en que se corra
 ```
+image: ![](/Users/valen/Documents/Maestria-Data-Science/Estadistica Computacional/Archivos Javier/ExamenPregunta_3.png)
 
 ### Pregunta 4
 ```{r warning=FALSE}
