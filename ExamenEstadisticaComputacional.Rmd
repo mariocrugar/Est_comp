@@ -7,69 +7,128 @@ output: html_document
 ## Examen Parcial de Estadística Computacional
 ## Profesor: Dr. León Berdichevsky Acosta
 
-```{r warning=FALSE}
+```{r warning=FALSE, include=FALSE}
 library(tidyverse)
 library(ggplot2)
 library(datasets)
 ```
 
-### Pregunta 1
-```{r warning=FALSE}
-data(iris)
-glimpse(iris)
-head(iris)
+#Pregunta 1: Manipulación y Visualización de Datos en R
 
-# a). Al parecer cuple con los principios de datos limpios. 
-# Los datos se encuentran ordenados por columnas y no hay más de una variable en una columna.
-# Cada observacón forma un renglón.
-# Cada tipo de unidad observacional forma una tabla.
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
 
-# b). No estoy seguro si no cumple los principios por esta pregunta.
-head(iris, n = 6)
+```{r }
+library(tidyverse)
+library(ggplot2)
+library(dplyr)
+iris_datos <- iris
+```
 
-# c).
-glimpse(iris)
-# 5 variables con 150 observaciones.
+La base de datos iris, contenida en el paquete base de R, contiene las medidas en centímetros de algunos atributos de 50 flores de 3 especies del género Iris.
 
-class(iris)
+a. ¿Cuántas observaciones y cuántas variables tiene la base de datos?  
+150 observaciones y 5 variables 
+```{r }
+glimpse(iris_datos)
+```
 
-# length, width, petal.lenght, petal.length double y species <ftc> similar a 
-# cadena de caracteres.
+b. ¿Cuál es la clase atómica de cada una de las variables?  
+Sepal.Length: num  
+Sepal.Width : num   
+Petal.Length: num  
+Petal.Width : num  
+Species character  
 
-setosa <- filter(iris, Species == "setosa")
-head(setosa, n = 6)
+Cree una nueva variable llamada n_flower de clase atómica integer que enumere del 1 al 50 las flores de cada especie (variable Species). Si la unidad observacional está especificada por las variables n_flower y Species:  
+```{r }
+iris_indexada<-iris %>% group_by(Species) %>% mutate(flower_n=1:n())
+head(iris_indexada)
+glimpse(iris_indexada)
+```
 
-setosa_desc <- arrange(setosa, desc(Petal.Length))
-head(setosa_desc, n = 6)
 
-setosa_mm <- mutate(setosa_desc, Petal.Length_mm = Petal.Length * 10)
-head(setosa_mm)
+c. ¿Cumple la base de datos el principio de datos limpios?Justifique su respuesta.   
+Inicialmente la base de datos Iris cumple el principio de los datos limpios pero al agregar la variable n_flower deja de cumplir con el principio 2 de los datos limpios (Cada tipo de unidad observacional forma una tabla)
+  
+Los principios de datos limpios:  
+1. Cada variable forma una columna.  
+2. Cada tipo de unidad observacional forma una tabla.  
+3. Cada valor de la unidad observacional forma un renglón.  
 
-setosa_NAs <- gather(setosa_mm, Petal.Length, na.rm = TRUE)
-head(setosa_NAs)
+d. En caso de que no cumpla el principio de datos limpios, limpie los datos. Imprima las primeras 6 líneas de los datos limpios (si ya estaban limpios entonces imprima las primeras 6 líneas de los datos originales).
+```{r }
+head(iris_datos)
+```
 
-ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width, color = Species)) +
-  geom_point()
+```{r }
+# Manipulación y Visualización de Datos en R
+# La base de datos iris, contenida en el paquete base de R, contiene las medidas en centímetros de algunos atributos de 50 flores de 3 especies del género Iris:
+#   a. ¿Cumple la base de datos el principio de datos limpios? Justifique su respuesta.
 
-ggplot(iris, aes(x = Petal.Length, y = Petal.Length, color = Species)) +
+iris_datos <- iris
+#Si cumple los principios de los datos limpios porque, 1. Cada variable forma una columna. 2. Cada tipo de unidad observacional forma una tabla( solo hay 1 que es flores).3. Cada valor de la unidad observacional forma un renglón.
+
+# b. En caso de que no cumpla el principio de datos limpios, limpie los datos. Imprima las primeras 6 líneas de los datos limpios (si ya estaban limpios entonces imprima las primeras 6 líneas de los datos originales).
+head(iris_datos)
+
+# Cada una de las siguientes preguntas requiere utilizar la base de datos con datos limpios del inciso b.:
+
+#   c. ¿Cuántas observaciones y cuántas variables tiene la base de datos?
+glimpse(iris_datos)
+
+#150 observaciones y 5 variables 
+
+#   d. ¿Cuál es la clase atómica de cada una de las variables?
+# Sepal.Length: num , $ Sepal.Width : num, $ Petal.Length: num, $ Petal.Width : num, Species character 
+
+
+#   e. Filtre las flores de la especie (variable Species) Setosa e imprima las primeras 6 observaciones.
+iris_filtrado <- iris %>% filter(Species!="setosa") # solo setosa
+head(iris_filtrado)
+
+iris_filtrado <- iris %>% filter(Species=="setosa")  # sin setosa
+head(iris_filtrado)
+
+# Ordene la base de datos de manera descendente con respecto a la variable Petal.Length e imprima las primeras 6 observaciones.
+iris_tibble<-as_tibble(iris)
+class(iris_tibble)
+arrange(iris_tibble, desc(Petal.Length))
+head(iris_tibble,10)
+
+# g. Cree una nueva variable en donde se muestre el atributo Sepal.Length en milímetros e imprima las primeras 6 observaciones.
+mutate(iris_tibble, Sepal.Length_mm = Sepal.Length * 10)
+head(iris_tibble,10)
+
+# h. Elimine las observaciones con valores faltantes en la variable Sepal.Width e indique el número de observaciones de la nueva base de datos.
+iris_tibble %>% drop_na(Sepal.Length)
+glimpse(iris_tibble)
+# 50 observaciones con setosa y 100 sin setosa todos en la variable sepal.lenghth no habia NAs
+
+# i. ¿Cuál es la media de la variable Petal.Width para cada una de las especies (variable Species) de flores?
+
+iris_byspecie<-group_by(iris_tibble, Species)
+iris_byspecie
+summarise(iris_byspecie, promedio = mean(Petal.Width))
+
+# # A tibble: 3 x 2
+# Species    promedio
+# <fct>         <dbl>
+#   1 setosa        0.246
+# 2 versicolor    1.33
+# 3 virginica     2.03
+
+# j. Realice una gráfica de dispersión de las variables x=Sepal.Length contra y=Sepal.Width en la que se distingan las diferentes especies (variable Species) por color o por forma de los puntos. 
+# La gráfica debe incluir título y nombres de los ejes horizontal y vertical.
+
+ggplot(iris_tibble) + 
+  geom_point(aes(x = Sepal.Length, y = Sepal.Width, color = Species))
+
+# k. Realice una gráfica de cajas de la variable Petal.Length en la que se distingan las diferentes especies (variable Species).
+ggplot(iris_tibble, aes(x = Species, y = Petal.Length)) +
   geom_boxplot()
 
-rpoisI <- function(lambda = 1){
-  U <- runif(1)
-  i <- 0
-  p <- exp(-lambda)
-  P <- p
-  while(U >= P){
-    p <- lambda * p / (i + 1)
-    P <- P + p
-    i <- i + 1
-  }
-  i
-}
-sims_pois <- rerun(1000, rpoisI()) %>% flatten_dbl()
-qplot(sims_pois, binwidth = 1)
-
-plot(sims_pois, 1:1000)
 ```
 
 ### Pregunta 2
